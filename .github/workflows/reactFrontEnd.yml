@@ -7,16 +7,13 @@ on:
   workflow_dispatch:  # Allow manual workflow dispatches
 
 jobs:
-  checkout:
+  build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-  install_dependency:
-    runs-on: ubuntu-latest
-    steps:
       - name: Install Node.js and npm
         uses: actions/setup-node@v2
         with:
@@ -25,16 +22,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-  setCi-tofalse:
-    runs-on: ubuntu-latest
-    steps:
       - name: Set CI to false
-        run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is considering warning as error
+        run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is connsidering warning as error
 
-  Build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
       - name: Build
         run: npm run build
