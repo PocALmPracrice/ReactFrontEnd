@@ -1,9 +1,9 @@
 name: Build React App (front end)
 
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - featureReact
   # pull_request:
   #   branches:
   #     - main
