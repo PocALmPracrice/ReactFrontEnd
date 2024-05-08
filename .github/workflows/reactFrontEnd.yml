@@ -40,9 +40,9 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.organization=pocalmpracrice \
-            -Dsonar.projectKey=PocALmPracrice_ReactFrontEnd \
-            -Dsonar.sources=. \
+            -Dsonar.organization=pocalmpracrice
+            -Dsonar.projectKey=PocALmPracrice_ReactFrontEnd 
+            -Dsonar.sources=.
             -Dsonar.host.url=https://sonarcloud.io
         env:
           SONAR_TOKEN: ${{ secrets.SONARCLOUDSECRET_TOKEN }}
