@@ -27,6 +27,12 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+         name: demo_upload_artifact
+         path: ReactFrontEnd/src/index.tsx
         
       - name: Cache dependencies
         uses: actions/cache@v2
@@ -70,3 +76,13 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
 
+
+
+
+      # - name: Publish to Nexus
+      #   env:
+      #     NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+      #     NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      #     NEXUS_URL: 'https://your-nexus-url/repository/maven-releases/'
+      #   run: |
+      #     curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file your-artifact.jar $NEXUS_URL
