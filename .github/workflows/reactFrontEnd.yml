@@ -94,8 +94,8 @@ jobs:
 
 
 
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      # - name: Checkout repository
+      #   uses: actions/checkout@v2
 
       - name: Install Snyk
         run: npm install -g snyk
