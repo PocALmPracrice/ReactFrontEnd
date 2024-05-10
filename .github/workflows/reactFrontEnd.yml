@@ -86,3 +86,22 @@ jobs:
       #     NEXUS_URL: 'https://your-nexus-url/repository/maven-releases/'
       #   run: |
       #     curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file your-artifact.jar $NEXUS_URL
+
+
+
+
+
+
+
+
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Test and Monitor Dependencies
+        run: snyk test
