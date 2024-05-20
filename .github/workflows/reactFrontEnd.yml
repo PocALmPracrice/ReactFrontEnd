@@ -99,14 +99,14 @@ jobs:
 
       - name: Install Snyk
         run: npm install -g snyk
-        continue-on-error: true
+        
 
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       - name: Test and Monitor Dependencies
         run: snyk test
-        
+        continue-on-error: true
       - name: Fix vulnerabilities
         run: npx snyk wizard --fail-on patchable
 
