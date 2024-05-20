@@ -109,6 +109,8 @@ jobs:
         continue-on-error: true
       - name: Test and Monitor Dependencies
         run: snyk test --json > snyk-report.json || true
+      - name: Install snyk-to-html
+        run: npm install -g snyk-to-html
 
       - name: Convert JSON report to HTML
         run: snyk-to-html -i snyk-report.json -o snyk-report.html
