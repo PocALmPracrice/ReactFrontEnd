@@ -97,39 +97,42 @@ jobs:
       # - name: Checkout repository
       #   uses: actions/checkout@v2
 
-      # - name: Install Snyk
-      #   run: npm install -g snyk
-
-      # - name: Authenticate Snyk
-      #   run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
-      # - name: Test and Monitor Dependencies
-      #   run: snyk test
-        
-      # - name: Fix vulnerabilities
-      #   run: npx snyk wizard --fail-on patchable
-
-
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@v2
+      - name: Install Snyk
+        run: npm install -g snyk
         continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: code test
-          args: --sarif-file-output=snyk.sarif
 
-      - name: List directory contents
-        run: ls -la
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk.sarif
-          category: my-analysis-tool
+      - name: Test and Monitor Dependencies
+        run: snyk test
         
-      - name: Print Snyk report
-        run: cat snyk.sarif      
+      - name: Fix vulnerabilities
+        run: npx snyk wizard --fail-on patchable
+
+
+      # - name: Run Snyk to check for vulnerabilities
+      #   uses: snyk/actions/node
+      #   with: 
+      #    node-version: 16
+      #   continue-on-error: true
+      #   env:
+      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      #   with:
+      #     command: code test
+      #     args: --sarif-file-output=snyk.sarif
+
+      # - name: List directory contents
+      #   run: ls -la
+
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v3
+      #   with:
+      #     sarif_file: snyk.sarif
+      #     category: my-analysis-tool
+        
+      # - name: Print Snyk report
+      #   run: cat snyk.sarif      
 
 
 
