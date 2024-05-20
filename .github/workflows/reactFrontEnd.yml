@@ -98,7 +98,8 @@ jobs:
       #   uses: actions/checkout@v2
 
       - name: Install Snyk
-        run: npm install -g snyk
+        # run: npm install -g snyk
+        uses: snyk/actions/node@master
         
 
       - name: Authenticate Snyk
