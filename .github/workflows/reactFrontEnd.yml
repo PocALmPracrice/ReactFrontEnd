@@ -1,3 +1,163 @@
+# name: Build React App (front end)
+
+# on:
+#   push:
+#     branches:
+#       - featureReact
+#   workflow_dispatch:  # Allow manual workflow dispatches
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+
+#       - name: Install Node.js and npm
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: '14'  # Use a valid Node.js version here
+
+#       - name: Install dependencies
+#         run: npm install
+
+#       - name: Set CI to false
+#         run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is connsidering warning as error
+
+#       - name: Build
+#         run: npm run build
+
+#       - name: Upload Artifact
+#         uses: actions/upload-artifact@v2
+#         with:
+#          name: demo_upload_artifact
+#          path: ReactFrontEnd/public/
+        
+#       - name: Cache dependencies
+#         uses: actions/cache@v2
+#         with:
+#          path: ~/.npm # or wherever your dependencies are stored
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: | 
+#           ${{ runner.os }}-node-
+#       - name: Static Code Analysis
+#         uses: sonarsource/sonarqube-scan-action@v2
+#         with:
+#           projectBaseDir: .
+#           args: >
+#             -Dsonar.organization=pocalmpracrice
+#             -Dsonar.projectKey=PocALmPracrice_ReactFrontEnd 
+#             -Dsonar.sources=.
+#             -Dsonar.host.url=https://sonarcloud.io
+#         env:
+#           SONAR_TOKEN: ${{ secrets.SONARCLOUDSECRET_TOKEN }}
+#           SONAR_HOST_URL: ${{ secrets.SONARCLOUD_URL }}
+
+#       - name: Send notification on Slack using Webhooks - Success
+#         if: ${{ success() }}
+#         uses: slackapi/slack-github-action@v1.24.0
+#         with:
+#           payload: |
+#             {
+#               "text": "React JS FrontEnd(client)project built successfully."
+#             }
+#         env:
+#           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
+
+#       - name: Send notification on Slack using Webhooks - Failure
+#         if: ${{ failure() }}
+#         uses: slackapi/slack-github-action@v1.24.0
+#         with:
+#           payload: |
+#             {
+#               "text": "React JS FrontEnd(client) build failed. Please check the build logs for details."
+#             }
+#         env:
+#           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
+
+
+
+
+#       # - name: Publish to Nexus
+#       #   env:
+#       #     NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+#       #     NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+#       #     NEXUS_URL: 'https://your-nexus-url/repository/maven-releases/'
+#       #   run: |
+#       #     curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file your-artifact.jar $NEXUS_URL
+
+
+
+
+
+
+
+
+#       # - name: Checkout repository
+#       #   uses: actions/checkout@v2
+
+#       - name: Install Snyk
+#         run: npm install -g snyk
+#         # uses: snyk/actions/node@master
+        
+
+#       - name: Authenticate Snyk
+#         run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+#       - name: Test and Monitor Dependencies
+#         run: snyk test
+#         continue-on-error: true
+#       - name: Test and Monitor Dependencies
+#         run: snyk test --json > snyk-report.json || true
+#       - name: Install snyk-to-html
+#         run: npm install -g snyk-to-html
+
+#       - name: Convert JSON report to HTML
+#         run: snyk-to-html -i snyk-report.json -o snyk-report.html
+#         env:
+#           PATH: ${{ github.workspace }}/node_modules/.bin:$PATH
+
+#       - name: Upload HTML report
+#         uses: actions/upload-artifact@v3
+#         with:
+#           name: snyk-report
+#           path: snyk-report.html
+#       - name: Fix vulnerabilities
+#         run: npx snyk wizard --fail-on patchable
+
+
+#       # - name: Run Snyk to check for vulnerabilities
+#       #   uses: snyk/actions/node
+#       #   with: 
+#       #    node-version: 16
+#       #   continue-on-error: true
+#       #   env:
+#       #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+#       #   with:
+#       #     command: code test
+#       #     args: --sarif-file-output=snyk.sarif
+
+#       # - name: List directory contents
+#       #   run: ls -la
+
+#       # - name: Upload SARIF file
+#       #   uses: github/codeql-action/upload-sarif@v3
+#       #   with:
+#       #     sarif_file: snyk.sarif
+#       #     category: my-analysis-tool
+        
+#       # - name: Print Snyk report
+#       #   run: cat snyk.sarif      
+
+
+
+
+
+
+
+
+
 name: Build React App (front end)
 
 on:
@@ -7,40 +167,56 @@ on:
   workflow_dispatch:  # Allow manual workflow dispatches
 
 jobs:
-  build:
+  checkout:
     runs-on: ubuntu-latest
-
+    outputs:
+      workspace: ${{ steps.checkout.outputs.workspace }}
     steps:
       - name: Checkout code
+        id: checkout
         uses: actions/checkout@v2
 
+  setup-node:
+    runs-on: ubuntu-latest
+    needs: checkout
+    steps:
       - name: Install Node.js and npm
         uses: actions/setup-node@v2
         with:
           node-version: '14'  # Use a valid Node.js version here
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Set CI to false
-        run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is connsidering warning as error
-
-      - name: Build
-        run: npm run build
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-         name: demo_upload_artifact
-         path: ReactFrontEnd/public/
-        
+  install-dependencies:
+    runs-on: ubuntu-latest
+    needs: setup-node
+    steps:
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
-         path: ~/.npm # or wherever your dependencies are stored
-         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-         restore-keys: | 
-          ${{ runner.os }}-node-
+          path: ~/.npm # or wherever your dependencies are stored
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm install
+
+  build:
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - name: Set CI to false
+        run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is considering warning as error
+      - name: Build
+        run: npm run build
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: demo_upload_artifact
+          path: ReactFrontEnd/public/
+
+  static-code-analysis:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Static Code Analysis
         uses: sonarsource/sonarqube-scan-action@v2
         with:
@@ -54,13 +230,17 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONARCLOUDSECRET_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARCLOUD_URL }}
 
+  notifications:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Send notification on Slack using Webhooks - Success
         if: ${{ success() }}
         uses: slackapi/slack-github-action@v1.24.0
         with:
           payload: |
             {
-              "text": "React JS FrontEnd(client)project built successfully."
+              "text": "React JS FrontEnd(client) project built successfully."
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
@@ -76,40 +256,23 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TOKEN }}
 
-
-
-
-      # - name: Publish to Nexus
-      #   env:
-      #     NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-      #     NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-      #     NEXUS_URL: 'https://your-nexus-url/repository/maven-releases/'
-      #   run: |
-      #     curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD --upload-file your-artifact.jar $NEXUS_URL
-
-
-
-
-
-
-
-
-      # - name: Checkout repository
-      #   uses: actions/checkout@v2
-
+  snyk:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Install Snyk
         run: npm install -g snyk
-        # uses: snyk/actions/node@master
         
-
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
       - name: Test and Monitor Dependencies
         run: snyk test
         continue-on-error: true
+
       - name: Test and Monitor Dependencies
         run: snyk test --json > snyk-report.json || true
+
       - name: Install snyk-to-html
         run: npm install -g snyk-to-html
 
@@ -123,32 +286,9 @@ jobs:
         with:
           name: snyk-report
           path: snyk-report.html
+
       - name: Fix vulnerabilities
         run: npx snyk wizard --fail-on patchable
-
-
-      # - name: Run Snyk to check for vulnerabilities
-      #   uses: snyk/actions/node
-      #   with: 
-      #    node-version: 16
-      #   continue-on-error: true
-      #   env:
-      #     SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      #   with:
-      #     command: code test
-      #     args: --sarif-file-output=snyk.sarif
-
-      # - name: List directory contents
-      #   run: ls -la
-
-      # - name: Upload SARIF file
-      #   uses: github/codeql-action/upload-sarif@v3
-      #   with:
-      #     sarif_file: snyk.sarif
-      #     category: my-analysis-tool
-        
-      # - name: Print Snyk report
-      #   run: cat snyk.sarif      
 
 
 
