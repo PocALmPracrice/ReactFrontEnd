@@ -5,6 +5,7 @@ on:
     types:
       - opened
       - synchronize
+  push:
 permissions: write-all
 jobs:
   review:
