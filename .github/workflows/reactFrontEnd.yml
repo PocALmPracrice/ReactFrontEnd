@@ -2,9 +2,9 @@
 name: Build React App (front end)
 
 on:
-  # push:
-  #   branches:
-  #     - featureReact
+  push:
+    branches:
+      - featureReact
   workflow_dispatch:  # Allow manual workflow dispatches
 
 jobs:
