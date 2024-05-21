@@ -189,22 +189,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup-node
     steps:
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm # or wherever your dependencies are stored
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+  
       - name: Install dependencies
         run: npm install
+      - name: Set CI to false
+        run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is connsidering warning as error
+
 
   build:
     runs-on: ubuntu-latest
     needs: install-dependencies
     steps:
-      - name: Set CI to false
-        run: echo 'CI=false' >> $GITHUB_ENV   #used this action since react script is considering warning as error
       - name: Build
         run: npm run build
       - name: Upload Artifact
@@ -212,6 +207,13 @@ jobs:
         with:
           name: demo_upload_artifact
           path: ReactFrontEnd/public/
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm # or wherever your dependencies are stored
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
   static-code-analysis:
     runs-on: ubuntu-latest
